@@ -72,20 +72,30 @@ ENV CUDA_HOME=/usr/local/cuda
 ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 ENV LIBRARY_PATH=${CUDA_HOME}/lib64/stubs:${LIBRARY_PATH}
 ENV CMAKE_PREFIX_PATH="/home/user/.local/lib/python3.10/site-packages/torch"
-
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel ninja --timeout 60 --retries 2
 RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-RUN pip install --no-cache-dir onnxruntime-gpu --timeout 300 --retries 5
+
+RUN python -m pip install --upgrade pip
+
+RUN pip install --no-cache-dir onnxruntime-gpu
 RUN pip install huggingface-hub
 RUN pip install boto3 diffusers torch
-RUN pip install ollama beautifulsoup4 pydantic instructor openai
-RUN pip install eval-type-backport
-RUN pip install bitsandbytes
-RUN pip install --no-cache-dir accelerate
+
+RUN pip install --no-cache-dir ollama
+RUN pip install --no-cache-dir beautifulsoup4
+RUN pip install --no-cache-dir pydantic
+RUN pip install --no-cache-dir openai
+
+RUN pip install eval-type-backport --upgrade
+RUN pip install bitsandbytes --upgrade
+RUN pip install --no-cache-dir accelerate --upgrade
 RUN pip install --no-cache-dir --upgrade transformers diffusers
-RUN pip install --no-cache-dir sentencepiece
-RUN pip install --no-cache-dir optimum-quanto
-RUN pip install --no-cache-dir optimum
+
+ENV PIP_DEFAULT_TIMEOUT=100
+
+RUN pip install --no-cache-dir sentencepiece --upgrade
+RUN pip install --no-cache-dir optimum-quanto --upgrade
+RUN pip install --no-cache-dir optimum --upgrade
 
 RUN python -c "import torch; print(torch.version.cuda)"
 RUN python -c "import torch; CMAKE_PREFIX_PATH=torch.utils.cmake_prefix_path" && \
@@ -104,7 +114,12 @@ VOLUME ["/mnt/c", "/cache"]
 RUN echo '#!/bin/bash\nchmod -R 777 /cache\nexec "$@"' > /home/user/entrypoint.sh
 RUN chmod +x /home/user/entrypoint.sh
 
-RUN pip install --upgrade diffusers huggingface-hub transformers torchvision
+RUN pip install --upgrade diffusers huggingface-hub
+
+RUN pip install --upgrade transformers torchvision
+
 RUN pip install xatlas
+RUN pip install --no-cache-dir instructor --upgrade
+
 
 ENTRYPOINT ["/home/user/entrypoint.sh"]
