@@ -120,6 +120,12 @@ RUN pip install --upgrade transformers torchvision
 
 RUN pip install xatlas
 RUN pip install --no-cache-dir instructor --upgrade
+#RUN pip install xformers
+
+COPY monitor_python_jobs.sh /home/user/
+COPY run_python_jobs.sh /home/user/
+COPY stop_python_jobs.sh /home/user/
+#RUN chmod +x /home/user/monitor_and_run_python.sh
 
 
 ENTRYPOINT ["/home/user/entrypoint.sh"]
